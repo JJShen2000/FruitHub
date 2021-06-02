@@ -8,7 +8,7 @@ import sys
 import re
 
 def load_name_id():
-    with open('fruit.csv', 'r') as csvf:
+    with open('./norm_csv/fruit.csv', 'r') as csvf:
         data = csv.DictReader(csvf)
         name_id = {}
 

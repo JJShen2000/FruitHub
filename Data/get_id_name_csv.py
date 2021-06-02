@@ -30,7 +30,7 @@ def get_id_name(date, url):
             
         date = date - one_day
     
-    with open('fruit.csv', 'w') as csvf:
+    with open('./norm_csv/fruit.csv', 'w') as csvf:
         writer = csv.writer(csvf)
         writer.writerow(['id', 'name'])
 
@@ -47,5 +47,8 @@ if __name__ == "__main__":
         td = date(td_year, td_month, td_day)
     else:
         td = date.today()
+
+    if not os.path.isdir('./norm_csv'):
+        os.mkdir("./norm_csv")
 
     get_id_name(td, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
