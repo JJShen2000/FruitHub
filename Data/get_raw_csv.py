@@ -127,21 +127,21 @@ if __name__ == "__main__":
 
     #############################################################################################################
 
-#    if len(sys.argv) > 1 and (sys.argv[-1] == 'daily_trade' or sys.argv[-1] == 'all'):
-#        today_date = str(td_year-1911) + '.' + "{:0>2d}".format(td_month) + '.' + "{:0>2d}".format(td_day)
-#        daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
-#    else:    
-#        temp_date = td
-#
-#        for d in range(5*365+3):
-#            temp_date = temp_date - one_day
-#
-#            temp_year = temp_date.year
-#            temp_month = temp_date.month
-#            temp_day = temp_date.day
-#
-#            today_date = str(temp_year-1911) + '.' + "{:0>2d}".format(temp_month) + '.' + "{:0>2d}".format(temp_day)
-#            daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
+    if len(sys.argv) > 1 and (sys.argv[-1] == 'daily_trade' or sys.argv[-1] == 'all'):
+        today_date = str(td_year-1911) + '.' + "{:0>2d}".format(td_month) + '.' + "{:0>2d}".format(td_day)
+        daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
+    else:    
+        temp_date = td
+
+        for d in range(5*365+3):
+            temp_date = temp_date - one_day
+
+            temp_year = temp_date.year
+            temp_month = temp_date.month
+            temp_day = temp_date.day
+
+            today_date = str(temp_year-1911) + '.' + "{:0>2d}".format(temp_month) + '.' + "{:0>2d}".format(temp_day)
+            daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
 
     #############################################################################################################
 
