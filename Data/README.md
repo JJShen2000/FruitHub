@@ -34,5 +34,8 @@ will insert data from 2015 into **MonthlyTrade.csv**
 ## TODO
 * Debug
 * Handle duplicated data problem (as mentioned above)
+* get_norm_csv.py update data based on the last date in raw_csv
+  * e.g. Date of last data is 2021/04/28 in raw_csv and </br> current date is 2021/06/03
+  it should insert data from 2021/04/29 ~ 2021/06/03
 * Make some changes to let the program more easier to use (?
 * Write a shell script to update automatically (?
