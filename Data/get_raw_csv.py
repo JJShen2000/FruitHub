@@ -36,7 +36,7 @@ def daily_trade_crop_to_csv(date, url):
                     temp += w if re.search("[\u4e00-\u9FFF]", w) else ''
 
             if name_id.get(temp) != None:
-                alt_date = str(int(item['交易日期'][:3])+1911) + '_' + item['交易日期'][4:6] + '_' + item['交易日期'][7:]
+                alt_date = str(int(item['交易日期'][:3])+1911) + '-' + item['交易日期'][4:6] + '-' + item['交易日期'][7:]
                 writer.writerow([alt_date, temp, int(item['市場代號']), item['市場名稱'], float(item['平均價']), float(item['交易量'])])
 
 def monthly_trade_crop_to_csv(year, url):    
@@ -90,6 +90,7 @@ def init():
     if not os.path.isdir('./raw_csv'):
         os.mkdir("./raw_csv")
 
+
     with open('./raw_csv/DailyTrade.csv', 'w') as csvf:
         writer = csv.writer(csvf)
         writer.writerow(['date', 'fruit_name', 'market_id', 'market_name', 'price', 'transaction'])
@@ -112,72 +113,100 @@ if __name__ == "__main__":
 
     one_day = datetime.timedelta(days=1)
     one_year = datetime.timedelta(days=365)
+    
+    td = date.today()
+    td_year = td.year
+    td_month = td.month
+    td_day = td.day
 
-    if len(sys.argv) > 1:
-        td_year = int(sys.argv[1][:4])
-        td_month = int(sys.argv[1][5:7])
-        td_day = int(sys.argv[1][8:])
-        td = date(td_year, td_month, td_day)
-    else:
+    update = False
+    daily_st = date.today() - 5*one_year
+    monthly_st = date.today() - 5*one_year
+    yearly_st = date.today() - 5*one_year
+
+    daily_ld = td
+    monthly_ld = td
+    yearly_ld = td
+
+    if not os.path.isfile('./raw_csv/update.log'):
+        with open('./raw_csv/update.log', 'w') as ulog:
+            ulog.write(str(td)+'\n')
+            ulog.write(str(td)+'\n')
+            ulog.write(str(td)+'\n')
         init()
-        td = date.today()
-        td_year = td.year
-        td_month = td.month
-        td_day = td.day
-
-    #############################################################################################################
-
-    if len(sys.argv) > 1 and (sys.argv[-1] == 'daily_trade' or sys.argv[-1] == 'all'):
-        today_date = str(td_year-1911) + '.' + "{:0>2d}".format(td_month) + '.' + "{:0>2d}".format(td_day)
-        daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
-    else:    
-        temp_date = td
-
-        for d in range(5*365+3):
-            temp_date = temp_date - one_day
-
-            temp_year = temp_date.year
-            temp_month = temp_date.month
-            temp_day = temp_date.day
-
-            today_date = str(temp_year-1911) + '.' + "{:0>2d}".format(temp_month) + '.' + "{:0>2d}".format(temp_day)
-            daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
-
-    #############################################################################################################
-
-    if len(sys.argv) > 1 and (sys.argv[-1] == 'monthly_trade' or sys.argv[-1] == 'all'):
-        monthly_trade_crop_to_csv(str(td_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
     else:
-        temp_date = td
+        with open('./raw_csv/update.log', 'r') as ulog:
+            ld = ulog.readline()
+            print(date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])))
+            if date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) < td:
+                update = True
+                daily_st = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) +  one_day
+            else:
+                daily_ld = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10]))
+                daily_st = td
 
-        for y in range(5+1):
-            temp_date = temp_date - one_year
+            ld = ulog.readline()
+            if date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) +  one_year <= td:
+                update = True
+                monthly_st = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) +  one_year
+            else:
+                monthly_ld = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10]))
+                monthly_st = td
 
-            temp_year = temp_date.year
-            temp_month = temp_date.month
-            temp_day = temp_date.day
+            ld = ulog.readline()
+            if date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) + one_year <= td:
+                update = True
+                yearly_st = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) +  one_year
+            else:
+                yearly_ld = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10]))
+                yearly_st = td
 
-            monthly_trade_crop_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
+        if update:
+            with open('./raw_csv/update.log', 'w') as ulog:
+                ulog.write(str(daily_ld)+'\n')
+                ulog.write(str(monthly_ld)+'\n')
+                ulog.write(str(yearly_ld)+'\n')
 
+    #############################################################################################################
+
+    temp_date = daily_st
+
+    while temp_date < td:
+        temp_year = temp_date.year
+        temp_month = temp_date.month
+        temp_day = temp_date.day
+
+        today_date = str(temp_year-1911) + '.' + "{:0>2d}".format(temp_month) + '.' + "{:0>2d}".format(temp_day)
+        daily_trade_crop_to_csv(today_date, "https://data.coa.gov.tw/Service/OpenData/FromM/FarmTransData.aspx")
+
+        temp_date = temp_date + one_day
+    #############################################################################################################
+
+    temp_date = monthly_st
+
+    while temp_date < td:
+        temp_year = temp_date.year
+        temp_month = temp_date.month
+        temp_day = temp_date.day
+
+        monthly_trade_crop_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
+
+        temp_date = temp_date + one_year
     #############################################################################################################
 
     monthly_produce_fruit_to_csv("https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
 
     #############################################################################################################
 
-    if len(sys.argv) > 1 and (sys.argv[-1] == 'yearly_produce' or sys.argv[-1] == 'all'):
-        yearly_produce_fruit_to_csv(str(td_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
-    else:
-        temp_date = td
+    temp_date = yearly_st
 
-        for y in range(5+1):
-            temp_date = temp_date - one_year
+    while temp_date < td:
+        temp_year = temp_date.year
+        temp_month = temp_date.month
+        temp_day = temp_date.day
+        
+        yearly_produce_fruit_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
 
-            temp_year = temp_date.year
-            temp_month = temp_date.month
-            temp_day = temp_date.day
-            
-            yearly_produce_fruit_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
-
+        temp_date = temp_date + one_year
     #############################################################################################################
     

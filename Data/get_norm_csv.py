@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 import datetime
 import requests
 from datetime import date
