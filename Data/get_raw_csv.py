@@ -137,7 +137,6 @@ if __name__ == "__main__":
     else:
         with open('./raw_csv/update.log', 'r') as ulog:
             ld = ulog.readline()
-            print(date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])))
             if date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) < td:
                 update = True
                 daily_st = date(int(ld[:4]), int(ld[5:7]), int(ld[8:10])) +  one_day

@@ -6,16 +6,14 @@
 ``` 
 python3 get_id_name_table.py
 ```
-* then, run **get_raw_csv.py**  
+* run shell script **update.sh**
 ```
-python3 get_raw_tables.py 
-```
-* last, run **get_norm_csv.py**
-```
-python3 get_norm_csv.py
+chmod u+x update.sh
+
+./update.sh
 ```
 
-Execute get_norm_csv.py will automatically update data (start from last update or 5 years ago to current date)
+* Use **crontab** to execute **update.sh** to update data daily.
 
 ## Misc
 * **If no argument, it'll fetch data last 5 years.**
