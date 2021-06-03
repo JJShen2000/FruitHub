@@ -25,4 +25,3 @@ chmod u+x update.sh
 * Find smarter way to make fruit's id_name table
 * Speed up updating norm_csv.
 * Make some changes to let the program more easier to use (?
-* Write a shell script to update automatically (?
