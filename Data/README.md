@@ -6,6 +6,8 @@
 ``` 
 python3 get_id_name_table.py
 ```
+* Remove vegitable and keep fruit manually
+
 * run shell script **update.sh**
 ```
 chmod u+x update.sh
