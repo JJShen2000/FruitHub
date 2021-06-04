@@ -25,7 +25,7 @@ def get_id_name(date, url):
                 else:
                     temp += w if re.search("[\u4e00-\u9FFF]", w) else ''
             
-            if id_name.get(temp) == None:
+            if id_name.get(temp) == None and item['種類代碼'] == "N05":
                 id_name[temp] = item['作物代號']
             
         date = date - one_day

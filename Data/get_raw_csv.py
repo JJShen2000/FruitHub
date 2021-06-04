@@ -28,7 +28,6 @@ def daily_trade_crop_to_csv(date, url):
 
         for item in data:
             temp = ''
-            
             for w in item['作物名稱']:
                 if w == '-':
                     break
