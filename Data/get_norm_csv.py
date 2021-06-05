@@ -86,26 +86,32 @@ def get_market_csv(name_id):
 
         with open('./norm_csv/market.csv', 'a') as csvf2:
             writer = csv.writer(csvf2)
-            id_market = set()
+            id_market = {}
 
             for row in data:
-                if name_id.get(row['fruit_name']) != None and (row['market_id'] + ',' + row['market_name']) not in id_market:
-                    id_market.add(row['market_id'] + ',' + row['market_name'])
+                if name_id.get(row['fruit_name']) != None and id_market.get(row['market_id']) == None:
+                    id_market[row['market_id']] = row['market_name']
             
-            for item in id_market:
-                writer.writerow(item.split(','))
+            for key in id_market:
+                writer.writerow([key, id_market[key]])
 
 def get_fruit_location_csv(name_id):
     with open('./raw_csv/YearlyProcudeFruit.csv', 'r') as csvf:
         data = csv.DictReader(csvf)
 
-        with open('./norm_csv/fruit_location.csv', 'a') as csvf2:
+        with open('./norm_csv/fruit_location.csv', 'a') as csvf2, open('./norm_csv/location.csv', 'r') as csvf3:
+            loca = csv.DictReader(csvf3)
+            id_loca = {}
+
+            for row in loca:
+                id_loca[row['name']] = row['id']
+            
             writer = csv.writer(csvf2)
             location_fruit = set()
 
             for row in data:
-                if name_id.get(row['fruit_name']) != None and (name_id[row['fruit_name']] + ',' + row['County']) not in location_fruit:
-                    location_fruit.add(name_id[row['fruit_name']] + ',' + row['County'])
+                if name_id.get(row['fruit_name']) != None and (name_id[row['fruit_name']] + ',' + id_loca[row['County']]) not in location_fruit:
+                    location_fruit.add(name_id[row['fruit_name']] + ',' + id_loca[row['County']])
             
             for item in location_fruit:
                 writer.writerow(item.split(','))
