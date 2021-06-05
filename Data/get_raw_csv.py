@@ -26,6 +26,8 @@ def daily_trade_crop_to_csv(date, url):
 
         name_id = load_name_id()
 
+        m = {}
+
         for item in data:
             temp = ''
             for w in item['作物名稱']:
@@ -34,9 +36,17 @@ def daily_trade_crop_to_csv(date, url):
                 else:
                     temp += w if re.search("[\u4e00-\u9FFF]", w) else ''
 
-            if name_id.get(temp) != None:
+            if name_id.get(temp) != None and item['作物名稱'] != '休市':
                 alt_date = str(int(item['交易日期'][:3])+1911) + '-' + item['交易日期'][4:6] + '-' + item['交易日期'][7:]
-                writer.writerow([alt_date, temp, int(item['市場代號']), item['市場名稱'], float(item['平均價']), float(item['交易量'])])
+                if m.get(alt_date+','+temp+','+item['市場代號']) != None:
+                    m[alt_date+','+temp+','+item['市場代號']][1] += float(item['平均價'])
+                    m[alt_date +','+ temp +','+ item['市場代號']][2] += float(item['交易量'])
+                    m[alt_date +','+ temp +','+ item['市場代號']][3] += 1
+                else:
+                    m[alt_date+ ','+ temp +','+ item['市場代號']] = [item['市場名稱'], float(item['平均價']), float(item['交易量']), 1]
+
+        for key in m:
+            writer.writerow(key.split(',') + [m[key][0], m[key][1] / m[key][3], m[key][2]])
 
 def monthly_trade_crop_to_csv(year, url):    
     url += "?UnitID=652&$filter=年份+like+" + year

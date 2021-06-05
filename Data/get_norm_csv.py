@@ -49,10 +49,19 @@ def get_daily_history_price_csv(name_id):
 
         with open('./norm_csv/daily_history_price.csv', 'a') as csvf2:
             writer = csv.writer(csvf2)
+            
+            m = {}
 
             for row in data:
-                if name_id.get(row['fruit_name']) != None:
-                    writer.writerow([name_id[row['fruit_name']], row['price'], row['date']])
+                if m.get(name_id[row['fruit_name']] + ',' + row['date']) != None:
+                    m[name_id[row['fruit_name']] + ',' + row['date']][0] += float(row['price'])
+                    m[name_id[row['fruit_name']] + ',' + row['date']][1] += 1
+                else:
+                    m[name_id[row['fruit_name']] + ',' + row['date']] = [float(row['price']), 1]
+                    
+            for key in m:
+                temp = key.split(',')
+                writer.writerow([temp[0], m[key][0] / m[key][1], temp[1]])
 
 def get_location_csv(name_id):
     with open('./raw_csv/YearlyProcudeFruit.csv', 'r') as csvf:
