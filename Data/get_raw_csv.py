@@ -54,24 +54,33 @@ def monthly_trade_crop_to_csv(year, url):
 
     with open('./raw_csv/MonthlyTrade.csv', 'a') as csvf:
         writer = csv.writer(csvf)
+
+        m = {}
+        name_id = load_name_id()
         
-        for item in data:
-            for key in item:
+        for i in range(len(data)):
+            if name_id.get(data[i]['作物']) == None:
+                continue
+            for key in data[i]:
                 if key == '作物':
                     temp = ''
-                    for w in item[key]:
+                    for w in data[i][key]:
                         if w == '(':
                             break
                         else:
                             temp += w if re.search("[\u4e00-\u9FFF]", w) else ''
-                    item[key] = temp
+                    data[i][key] = temp
 
-                if key != '作物' and ((type(item[key]) != str) or (len(item[key]) == 0) or (not item[key][0].isdigit())):
-                    item[key] = ''
+                if key != '作物' and ((type(data[i][key]) != str) or (len(data[i][key]) == 0) or (not data[i][key][0].isdigit())):
+                    data[i][key] = '0'
+                
+        d = [row.values() for row in data]
+        print(d)
 
-            writer.writerow([item['作物'], int(item['年份'][:-1]), item['1月價格'], item['2月價格'], item['3月價格'], item['4月價格'], \
-                             item['5月價格'], item['6月價格'], item['7月價格'], item['7月價格'], item['8月價格'], item['9月價格'],      \
-                             item['10月價格'], item['11月價格'], item['12月價格']])
+
+#            writer.writerow([item['作物'], int(item['年份'][:-1]), item['1月價格'], item['2月價格'], item['3月價格'], item['4月價格'], \
+ #                            item['5月價格'], item['6月價格'], item['7月價格'], item['7月價格'], item['8月價格'], item['9月價格'],      \
+  #                           item['10月價格'], item['11月價格'], item['12月價格']])
 
 
 def monthly_produce_fruit_to_csv(url):
@@ -104,9 +113,9 @@ def init():
         writer = csv.writer(csvf)
         writer.writerow(['date', 'fruit_name', 'market_id', 'market_name', 'price', 'transaction'])
 
-    with open('./raw_csv/MonthlyTrade.csv', 'w') as csvf:
-        writer = csv.writer(csvf)
-        writer.writerow(['fruit_name', 'year', 'January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])
+#    with open('./raw_csv/MonthlyTrade.csv', 'w') as csvf:
+#        writer = csv.writer(csvf)
+#        writer.writerow(['fruit_name', 'year', 'January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])
 
     with open('./raw_csv/MonthlyProcudeFruit.csv', 'w') as csvf:
         writer = csv.writer(csvf)
@@ -190,16 +199,16 @@ if __name__ == "__main__":
         temp_date = temp_date + one_day
     #############################################################################################################
 
-    temp_date = monthly_st
-
-    while temp_date < td:
-        temp_year = temp_date.year
-        temp_month = temp_date.month
-        temp_day = temp_date.day
-
-        monthly_trade_crop_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
-
-        temp_date = temp_date + one_year
+#    temp_date = monthly_st
+#
+#    while temp_date < td:
+#        temp_year = temp_date.year
+#        temp_month = temp_date.month
+#        temp_day = temp_date.day
+#
+#        monthly_trade_crop_to_csv(str(temp_year), "https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
+#
+#        temp_date = temp_date + one_year
     #############################################################################################################
 
     monthly_produce_fruit_to_csv("https://data.coa.gov.tw/Service/OpenData/DataFileService.aspx")
