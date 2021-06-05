@@ -9,7 +9,7 @@ if __name__ == '__main__':
     cmds = []
     for t in tables:
         cur.execute('delete from '+t+"s;")
-        cmds.append(".import "+t+".csv "+t+"s")
+        cmds.append(".import norm_csv/"+t+".csv "+t+"s")
         #print(".import "+t+".csv "+t+"s")
     con.commit()
     subprocess.call(["sqlite3", "database.sqlite", "-cmd",".mode csv",cmds[0], cmds[1], cmds[2], cmds[3],cmds[4], cmds[5], cmds[6]])
