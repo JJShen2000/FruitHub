@@ -8,11 +8,11 @@ import re
 
 def load_name_id():
     with open('./norm_csv/fruit.csv', 'r') as csvf:
-        data = csv.DictReader(csvf)
+        data = csv.reader(csvf)
         name_id = {}
 
         for row in data:
-            name_id[row['name']] = row['id']
+            name_id[row[1]] = row[0]
 
     return name_id
 
@@ -42,6 +42,7 @@ def get_fruit_month_csv(name_id):
 #                if name_id.get(row[0]) != None:
 #                    for i in range(2, 2+12):
 #                        writer.writerow([name_id[row[0]], row[1], i-1, row[i]])
+
 def get_monthly_history_price_csv(name_id):
     with open('./raw_csv/DailyTrade.csv', 'r') as csvf:
         data = csv.DictReader(csvf)
@@ -121,11 +122,11 @@ def get_fruit_location_csv(name_id):
         data = csv.DictReader(csvf)
 
         with open('./norm_csv/fruit_location.csv', 'a') as csvf2, open('./norm_csv/location.csv', 'r') as csvf3:
-            loca = csv.DictReader(csvf3)
+            loca = csv.reader(csvf3)
             id_loca = {}
 
             for row in loca:
-                id_loca[row['name']] = row['id']
+                id_loca[row[1]] = row[0]
             
             writer = csv.writer(csvf2)
             location_fruit = set()
@@ -137,33 +138,52 @@ def get_fruit_location_csv(name_id):
             for item in location_fruit:
                 writer.writerow(item.split(','))
 
+def get_fruit_market_csv(name_id):
+    with open('./raw_csv/DailyTrade.csv', 'r') as csvf:
+        data = csv.DictReader(csvf)
+        
+        with open('./norm_csv/fruit_market.csv', 'a') as csvf2:
+            writer = csv.writer(csvf2)
+
+            fruit_market = set()
+
+            for row in data:
+                if name_id.get(row['fruit_name']) != None:
+                    fruit_market.add(name_id[row['fruit_name']] + ',' + row['market_id'])
+            
+            for item in fruit_market:
+                writer.writerow(item.split(','))
+   
+
 def init():
     if not os.path.isdir('./norm_csv'):
         os.mkdir("./norm_csv")
     
     with open('./norm_csv/fruit_month.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['fruit_id', 'month'])
+#        writer.writerow(['fruit_id', 'month'])
 
     with open('./norm_csv/monthly_history_price.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['fruit_id', 'year', 'month', 'price'])
+#        writer.writerow(['fruit_id', 'year', 'month', 'price'])
     
     with open('./norm_csv/daily_history_price.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['fruit_id', 'date', 'price'])
+#        writer.writerow(['fruit_id', 'date', 'price'])
 
     with open('./norm_csv/location.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['id', 'name'])
+#        writer.writerow(['id', 'name'])
 
     with open('./norm_csv/market.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['id', 'name'])
+#        writer.writerow(['id', 'name'])
 
     with open('./norm_csv/fruit_location.csv', 'w') as csvf2:
         writer = csv.writer(csvf2)
-        writer.writerow(['fruit_id', 'location_id'])
+#        writer.writerow(['fruit_id', 'location_id'])
+    with open('./norm_csv/fruit_market.csv', 'w') as csvf2:
+        writer = csv.writer(csvf2)
 
 if __name__ == '__main__':
     init()
@@ -175,3 +195,4 @@ if __name__ == '__main__':
     get_location_csv(name_id)
     get_market_csv(name_id)
     get_fruit_location_csv(name_id)
+    get_fruit_market_csv(name_id)

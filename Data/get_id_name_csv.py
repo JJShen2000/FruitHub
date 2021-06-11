@@ -12,12 +12,14 @@ id_name = {}
 def get_id_name(date, url):
     for d in range(365*5+1):
         str_date = str(int(date.year-1911)) + '.' + "{:0>2d}".format(date.month) + '.' + "{:0>2d}".format(date.day)
-        print(str_date)
         curl = url + "?$StartDate=" + str_date + '&EndDate=' + str_date
         data = requests.get(curl).json()
 
         for item in data:
             temp = ''
+
+            if item['作物名稱'] == None:
+                continue
             
             for w in item['作物名稱']:
                 if w == '-':
@@ -32,7 +34,7 @@ def get_id_name(date, url):
     
     with open('./norm_csv/fruit.csv', 'w') as csvf:
         writer = csv.writer(csvf)
-        writer.writerow(['id', 'name'])
+#        writer.writerow(['id', 'name'])
 
         for key in id_name:
             writer.writerow([id_name[key], key])

@@ -9,11 +9,11 @@ import re
 
 def load_name_id():
     with open('./norm_csv/fruit.csv', 'r') as csvf:
-        data = csv.DictReader(csvf)
+        data = csv.reader(csvf)
         name_id = {}
 
         for row in data:
-            name_id[row['name']] = row['id']
+            name_id[row[1]] = row[0]
 
     return name_id
 
@@ -28,7 +28,11 @@ def daily_trade_crop_to_csv(date, url):
 
         m = {}
 
+
         for item in data:
+            if item['作物名稱'] == None:
+                continue
+            
             temp = ''
             for w in item['作物名稱']:
                 if w == '-':
@@ -36,7 +40,7 @@ def daily_trade_crop_to_csv(date, url):
                 else:
                     temp += w if re.search("[\u4e00-\u9FFF]", w) else ''
 
-            if name_id.get(temp) != None and item['作物名稱'] != '休市':
+            if name_id.get(temp) != None and (item['作物名稱'] != '休市' or item['作物名稱'] != '其他'):
                 alt_date = str(int(item['交易日期'][:3])+1911) + '-' + item['交易日期'][4:6] + '-' + item['交易日期'][7:]
                 if m.get(alt_date+','+temp+','+item['市場代號']) != None:
                     m[alt_date+','+temp+','+item['市場代號']][1] += float(item['平均價'])
@@ -84,7 +88,7 @@ def monthly_trade_crop_to_csv(year, url):
 
 
 def monthly_produce_fruit_to_csv(url):
-    url += "?UnitId=061&$filter=type+like+水果"
+    url += "?UnitId=061&"
     data = requests.get(url).json()
 
     with open('./raw_csv/MonthlyProcudeFruit.csv', 'a') as csvf:

@@ -2,6 +2,15 @@
 
 # Please execute this script every day (recommand crontab)
 
+GET_ID_NAME_FILE="./norm_csv/fruit.csv"
+if [ ! -f "$GET_ID_NAME_FILE" ]
+then
+    echo "update fruit id"
+    find -O3 /home -name 'get_id_name_csv.py' -exec python3 '{}' \; 
+    echo "fruit id update finished"
+    wait
+fi
+
 echo "update raw csv"
 find -O3 /home -name 'get_raw_csv.py' -exec python3 '{}' \; 
 echo "raw csv update finished"
