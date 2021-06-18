@@ -1,3 +1,6 @@
 [submodule "Frontend"]
 	path = Frontend
 	url = https://github.com/huroy5518/DBMS_2021_G19_front
+[submodule "Backend"]
+	path = Backend
+	url = https://github.com/tmp54/dbms-final-project
